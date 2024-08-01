@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 #Get Spreadsheet with new vocab
 logging.debug('current dir is: ' + os.getcwd())
-os.chdir(r'C:\Users\omorland\PythonProjects\autoAnkiFiles')
+os.chdir(r'C:\Users\omorland\PythonProjects\AutoAnki\autoAnkiFiles')
 logging.debug('changed current dir to: ' + os.getcwd())
 workbook = openpyxl.load_workbook('AnkiVocab.xlsx')
 sheet = workbook['Sheet1']
