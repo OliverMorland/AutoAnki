@@ -35,7 +35,8 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 #Get Spreadsheet with new vocab
 vocabString = pyperclip.paste()
-pattern = r'\b([가-힣]+)\b\s*:\s*(\w+)\b'
+#[OLD]pattern = r'\b([가-힣]+)\b\s*:\s*(\w+)\b'
+pattern = r"([\uac00-\ud7af,! ]+) : ([A-Za-z ,\?'!]+)"
 vocabPairs = re.findall(pattern, vocabString)
 
 #Create Anki Deck
@@ -60,7 +61,7 @@ model = genanki.Model(
     templates=[
         {
             'name':'Card 1',
-            'qfmt':'{{Question}}<br>',
+            'qfmt':'''{{Question}}<br>''',
             'afmt':'{{FrontSide}}<hr id="answer">{{Answer}}{{MyMedia}}'
         },
     ])
