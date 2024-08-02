@@ -12,7 +12,7 @@ def text_to_speech_korean(word, filename='output.mp3'):
 def get_media_paths(mediaDir):
     mediaFiles = os.listdir(mediaDir)
     for i in range(len(mediaFiles)):
-        mediaFiles[i] = mediaDir+'\\'+mediaFiles[i]
+        mediaFiles[i] = '..\\'+mediaDir+'\\'+mediaFiles[i]
     return mediaFiles
 
 #Get desired name from args
@@ -22,6 +22,12 @@ def get_desired_name():
         return sys.argv[1]
     else:
         return defaultName
+
+#Create and Enter Directory
+def create_enter_dir(targetDir):
+    if not os.path.exists(targetDir):
+        os.mkdir(targetDir)
+    os.chdir(targetDir)
         
 
 #Configure logging
@@ -60,16 +66,16 @@ model = genanki.Model(
     ])
         
 
-#Add note to deck for each row in spreadsheet
+#Navigate to assets directory
 script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-os.chdir(script_directory)
+os.chdir(script_directory + '\\..')
+create_enter_dir(deckName)
 
-#Look for folders called KoreanAudio
-audioDir = 'koreanAudioFiles';
-if not os.path.exists(audioDir):
-    os.mkdir(audioDir)
-os.chdir(audioDir)
-    
+#Navigate to audio directory
+audioDir = 'AudioFiles'
+create_enter_dir(audioDir)
+
+#Add notes
 for korean, english in vocabPairs:
     text_to_speech_korean(korean, filename=korean+'.mp3')
     sound = '[sound:'+korean+'.mp3]'
@@ -78,7 +84,8 @@ for korean, english in vocabPairs:
         fields=[english, korean, sound])
     deck.add_note(note)
     print('Adding note for ' + korean)
-    
+
+#Navigate to assets folder  
 os.chdir('..')
 
 #Save media to package
@@ -86,6 +93,7 @@ package = genanki.Package(deck)
 package.media_files = get_media_paths(audioDir)
 
 #Save .akpg file
+create_enter_dir('AnkiPackages')
 currentDir = os.getcwd()
 packageName = get_desired_name()
 path = os.path.join(currentDir, packageName + '.apkg')
