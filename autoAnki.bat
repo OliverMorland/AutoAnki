@@ -1,2 +1,2 @@
-@py.exe C:\Users\omorland\PythonProjects\Scripts\autoAnki.py %*
+@py.exe C:\Users\omorland\PythonProjects\AutoAnki\autoAnki.py %*
 @pause
