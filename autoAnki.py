@@ -33,75 +33,81 @@ def create_enter_dir(targetDir):
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-# Create a list of korean - english pairs
-vocabString = pyperclip.paste()
-pattern = r"([\uac00-\ud7af,! ]+) : ([A-Za-z ,\?'!]+)"
-vocabPairs = re.findall(pattern, vocabString)
+def run_program():
+    # Create a list of korean - english pairs
+    vocabString = pyperclip.paste()
+    pattern = r"([\uac00-\ud7af,! ]+) : ([A-Za-z ,\?'!]+)"
+    vocabPairs = re.findall(pattern, vocabString)
 
-# Create Anki Deck
-deckId = random.randrange(1 << 30, 1 << 31)
-deckName = get_desired_name()
-logging.debug('Deck Id is ' + str(deckId))
-deck = genanki.Deck(
-    deckId,
-    deckName)
+    # Create Anki Deck
+    deckId = random.randrange(1 << 30, 1 << 31)
+    deckName = get_desired_name()
+    logging.debug('Deck Id is ' + str(deckId))
+    deck = genanki.Deck(
+        deckId,
+        deckName)
 
-# Create Anki Model
-modelId = random.randrange(1 << 30, 1 << 31)
-logging.debug('Model Id is ' + str(modelId))
-model = genanki.Model(
-    modelId,
-    'Vocab Model',
-    fields=[
-        {'name': 'Question'},
-        {'name': 'Answer'},
-        {'name': 'MyMedia'},
-        ],
-    templates=[
-        {
-            'name':'Card 1',
-            'qfmt':'''<h3 style="text-align: center;"=>{{Question}}</h3><br>''',
-            'afmt':'''<h3 style="text-align: center;"=>{{FrontSide}}</h3>
-                        <hr id="answer">
-                        <h3 style="text-align: center;"=>{{Answer}}</h3><br>
-                        {{MyMedia}}'''
-        },
-    ])
-        
+    # Create Anki Model
+    modelId = random.randrange(1 << 30, 1 << 31)
+    logging.debug('Model Id is ' + str(modelId))
+    model = genanki.Model(
+        modelId,
+        'Vocab Model',
+        fields=[
+            {'name': 'Question'},
+            {'name': 'Answer'},
+            {'name': 'MyMedia'},
+            ],
+        templates=[
+            {
+                'name':'Card 1',
+                'qfmt':'''<h3 style="text-align: center;"=>{{Question}}</h3><br>''',
+                'afmt':'''<h3 style="text-align: center;"=>{{FrontSide}}</h3>
+                            <hr id="answer">
+                            <h3 style="text-align: center;"=>{{Answer}}</h3><br>
+                            {{MyMedia}}'''
+            },
+        ])
+            
 
-# Navigate to assets directory
-script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-os.chdir(script_directory + '\\..')
-create_enter_dir(deckName)
+    # Navigate to assets directory
+    script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+    os.chdir(script_directory + '\\..')
+    create_enter_dir(deckName)
 
-# Navigate to audio directory
-audioDir = 'AudioFiles'
-create_enter_dir(audioDir)
+    # Navigate to audio directory
+    audioDir = 'AudioFiles'
+    create_enter_dir(audioDir)
 
-# Add notes
-for korean, english in vocabPairs:
-    text_to_speech_korean(korean, filename=korean+'.mp3')
-    sound = '[sound:'+korean+'.mp3]'
-    note = genanki.Note(
-        model=model,
-        fields=[english, korean, sound])
-    deck.add_note(note)
-    print('Adding note for ' + korean)
+    # Add notes
+    for korean, english in vocabPairs:
+        text_to_speech_korean(korean, filename=korean+'.mp3')
+        sound = '[sound:'+korean+'.mp3]'
+        note = genanki.Note(
+            model=model,
+            fields=[english, korean, sound])
+        deck.add_note(note)
+        print('Adding note for ' + korean)
 
-# Navigate to assets folder
-os.chdir('..')
+    # Navigate to assets folder
+    os.chdir('..')
 
-# Save media to package
-package = genanki.Package(deck)
-package.media_files = get_media_paths(audioDir)
+    # Save media to package
+    package = genanki.Package(deck)
+    package.media_files = get_media_paths(audioDir)
 
-# Save .akpg file
-create_enter_dir('AnkiPackages')
-currentDir = os.getcwd()
-packageName = get_desired_name()
-path = os.path.join(currentDir, packageName + '.apkg')
-package.write_to_file(packageName + '.apkg')
-print('Created new deck at ' + path)
-os.startfile(path)
+    # Save .akpg file
+    create_enter_dir('AnkiPackages')
+    currentDir = os.getcwd()
+    packageName = get_desired_name()
+    path = os.path.join(currentDir, packageName + '.apkg')
+    package.write_to_file(packageName + '.apkg')
+    print('Created new deck at ' + path)
+    os.startfile(path)
+
+if __name__ == '__main__':
+    run_program()
+
+
 
 
