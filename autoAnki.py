@@ -1,6 +1,7 @@
 #! python3
 import genanki, os, random, pyperclip, re, sys, logging
 from gtts import gTTS
+from flask import Flask, request, send_file, render_template
 
 # Text to speech function
 def text_to_speech_korean(word, filename='output.mp3'):
@@ -33,9 +34,21 @@ def create_enter_dir(targetDir):
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-def run_program():
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        user_input = request.form['user_text']
+        file_path = run_program(user_input)
+        return send_file(file_path, as_attachment=True)
+    return render_template('index.html')
+
+
+def run_program(input_text):
     # Create a list of korean - english pairs
-    vocabString = pyperclip.paste()
+    # vocabString = pyperclip.paste()
+    vocabString = input_text
     pattern = r"([\uac00-\ud7af,! ]+) : ([A-Za-z ,\?'!]+)"
     vocabPairs = re.findall(pattern, vocabString)
 
@@ -87,7 +100,7 @@ def run_program():
             model=model,
             fields=[english, korean, sound])
         deck.add_note(note)
-        print('Adding note for ' + korean)
+        # print('Adding note for ' + korean)
 
     # Navigate to assets folder
     os.chdir('..')
@@ -103,10 +116,12 @@ def run_program():
     path = os.path.join(currentDir, packageName + '.apkg')
     package.write_to_file(packageName + '.apkg')
     print('Created new deck at ' + path)
-    os.startfile(path)
+    return path
+    # os.startfile(path)
+
 
 if __name__ == '__main__':
-    run_program()
+    app.run(debug=True)
 
 
 
