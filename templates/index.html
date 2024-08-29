@@ -8,8 +8,13 @@
 <body>
     <h1>Korean Flash Card Generator</h1>
     <form method="POST">
-        <textarea name="user_text" rows="10" cols="30"></textarea><br><br>
-        <input type="submit" value="Generate File">
+        <label for="deck_name">Deck Name:</label><br>
+        <input type="text" id="deck_name" name="deck_name" placeholder="My New Deck"><br><br>
+        <label for="user_text">Enter your vocabulary list</label><br>
+        <textarea name="user_text" rows="10" cols="100" placeholder="1. 고양이 : Cat
+2. 개 : Dog
+3. 모르겠어요 : I don't know"></textarea><br><br>
+        <input type="submit" value="Generate Flashcard Deck">
     </form>
 </body>
 </html>

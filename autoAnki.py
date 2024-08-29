@@ -39,13 +39,14 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
+        deck_name_input = request.form['deck_name']
         user_input = request.form['user_text']
-        file_path = run_program(user_input)
+        file_path = run_program(deck_name_input, user_input)
         return send_file(file_path, as_attachment=True)
     return render_template('index.html')
 
 
-def run_program(input_text):
+def run_program(deck_name_input, input_text):
     # Create a list of korean - english pairs
     # vocabString = pyperclip.paste()
     vocabString = input_text
@@ -54,7 +55,8 @@ def run_program(input_text):
 
     # Create Anki Deck
     deckId = random.randrange(1 << 30, 1 << 31)
-    deckName = get_desired_name()
+    # deckName = get_desired_name()
+    deckName = deck_name_input
     logging.debug('Deck Id is ' + str(deckId))
     deck = genanki.Deck(
         deckId,
@@ -112,7 +114,7 @@ def run_program(input_text):
     # Save .akpg file
     create_enter_dir('AnkiPackages')
     currentDir = os.getcwd()
-    packageName = get_desired_name()
+    packageName = deckName
     path = os.path.join(currentDir, packageName + '.apkg')
     package.write_to_file(packageName + '.apkg')
     print('Created new deck at ' + path)
