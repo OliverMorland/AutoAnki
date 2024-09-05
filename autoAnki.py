@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 # Create a list of korean - english pairs
 vocabString = pyperclip.paste()
-pattern = r"([\uac00-\ud7af,! ]+) : ([A-Za-z ,\?'!]+)"
+pattern = r"([\uac00-\ud7af,! ]+) : ([A-Za-z ,\?'!()]+)"
 vocabPairs = re.findall(pattern, vocabString)
 
 # Create Anki Deck
